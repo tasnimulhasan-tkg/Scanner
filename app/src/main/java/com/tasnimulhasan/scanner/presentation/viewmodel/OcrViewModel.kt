@@ -3,6 +3,7 @@ package com.tasnimulhasan.scanner.presentation.viewmodel
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tasnimulhasan.scanner.domain.model.ParseConfidence
 import com.tasnimulhasan.scanner.domain.model.Receipt
 import com.tasnimulhasan.scanner.domain.model.ReceiptItem
 import com.tasnimulhasan.scanner.domain.usecase.ParseReceiptUseCase
@@ -118,24 +119,32 @@ class OcrViewModel @Inject constructor(
     // ── Demo Data ─────────────────────────────────────────────────────────────
 
     private fun buildDemoReceipt() = Receipt(
-        id = "DEMO-001",
-        storeName = "FreshMart Superstore",
-        storeAddress = "142 Gulshan Avenue, Dhaka 1212",
-        date = "09/06/2026",
+        id            = "DEMO-001",
+        storeName     = "FreshMart Superstore",
+        storeAddress  = "142 Gulshan Avenue, Dhaka 1212",
+        date          = "09/06/2026",
+        time          = "14:32",
+        receiptNumber = "#00847291",
         items = listOf(
-            ReceiptItem("Organic Whole Milk 1L", "2", "$2.49", "$4.98"),
-            ReceiptItem("Sourdough Bread Loaf", "1", "$3.75", "$3.75"),
-            ReceiptItem("Free-Range Eggs 12pk", "1", "$5.99", "$5.99"),
-            ReceiptItem("Greek Yogurt 500g", "2", "$3.25", "$6.50"),
-            ReceiptItem("Chicken Breast 1kg", "1", "$8.99", "$8.99"),
-            ReceiptItem("Broccoli Florets 500g", "1", "$2.49", "$2.49"),
-            ReceiptItem("Sparkling Water 6pk", "1", "$4.50", "$4.50"),
-            ReceiptItem("Dark Chocolate 85%", "3", "$2.99", "$8.97"),
+            ReceiptItem("Organic Whole Milk 1L", "2", "$2.49", "$4.98",  "4.98"),
+            ReceiptItem("Sourdough Bread Loaf",  "1", "$3.75", "$3.75",  "3.75"),
+            ReceiptItem("Free-Range Eggs 12pk",  "1", "$5.99", "$5.99",  "5.99"),
+            ReceiptItem("Greek Yogurt 500g",     "2", "$3.25", "$6.50",  "6.50"),
+            ReceiptItem("Chicken Breast 1kg",    "1", "$8.99", "$8.99",  "8.99"),
+            ReceiptItem("Broccoli Florets 500g", "1", "$2.49", "$2.49",  "2.49"),
+            ReceiptItem("Sparkling Water 6pk",   "1", "$4.50", "$4.50",  "4.50"),
+            ReceiptItem("Dark Chocolate 85%",    "3", "$2.99", "$8.97",  "8.97"),
+            ReceiptItem("Member Discount",       null, null,   "-$2.00", "-2.00", isDiscount = true),
         ),
-        subtotal = "$46.17",
-        tax = "$2.31",
-        total = "$48.48",
-        paymentMethod = "Visa",
+        subtotal        = "$46.17",
+        discount        = "-$2.00",
+        tax             = "$2.31",
+        serviceFee      = null,
+        total           = "$46.48",
+        paymentMethod   = "Visa",
+        currency        = "$",
+        parseConfidence = ParseConfidence.HIGH,
+        rawLines        = DEMO_RAW_TEXT.lines().map { it.trim() }.filter { it.isNotBlank() },
     )
 
     companion object {
