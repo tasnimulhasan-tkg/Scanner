@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.DocumentScanner
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ImagePickerButton(
     onImageSelected: (Uri) -> Unit,
+    onCameraClicked: () -> Unit,       // ← NEW
     onDemoClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -45,8 +48,9 @@ fun ImagePickerButton(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        // ── Camera button (primary action) ────────────────────────────────
         Button(
-            onClick = { launcher.launch("image/*") },
+            onClick = onCameraClicked,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
@@ -56,46 +60,63 @@ fun ImagePickerButton(
             ),
         ) {
             Icon(
+                imageVector = Icons.Outlined.CameraAlt,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = "Scan with Camera",
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
+
+        // ── Divider ───────────────────────────────────────────────────────
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Divider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outline)
+            Text(
+                text = "  or  ",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Divider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outline)
+        }
+
+        // ── Gallery picker ────────────────────────────────────────────────
+        OutlinedButton(
+            onClick = { launcher.launch("image/*") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(14.dp),
+            border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.primary,
+            ),
+        ) {
+            Icon(
                 imageVector = Icons.Outlined.Image,
                 contentDescription = null,
                 modifier = Modifier.size(20.dp),
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "Pick Receipt Image",
+                text = "Pick from Gallery",
                 style = MaterialTheme.typography.titleMedium,
             )
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            androidx.compose.material3.Divider(
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.outline,
-            )
-            Text(
-                text = "  or  ",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            androidx.compose.material3.Divider(
-                modifier = Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.outline,
-            )
-        }
-
+        // ── Demo button ───────────────────────────────────────────────────
         OutlinedButton(
             onClick = onDemoClicked,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
             shape = RoundedCornerShape(14.dp),
-            border = BorderStroke(
-                width = 1.5.dp,
-                color = MaterialTheme.colorScheme.secondary,
-            ),
+            border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.secondary),
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = MaterialTheme.colorScheme.secondary,
             ),

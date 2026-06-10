@@ -29,6 +29,7 @@ data class OcrScreenState(
     val uiState: OcrUiState = OcrUiState.Idle,
     val showRawText: Boolean = false,
     val isDemoMode: Boolean = false,
+    val showCamera: Boolean = false,  // ← NEW: drives CameraScreen visibility
 )
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
@@ -44,6 +45,22 @@ class OcrViewModel @Inject constructor(
 
     fun onImageSelected(uri: Uri) {
         _state.update { it.copy(selectedImageUri = uri, isDemoMode = false) }
+        processImage(uri)
+    }
+
+    /** Opens the full-screen CameraX viewfinder */
+    fun onOpenCamera() {
+        _state.update { it.copy(showCamera = true) }
+    }
+
+    /** Called when the user backs out of the camera without taking a photo */
+    fun onCloseCamera() {
+        _state.update { it.copy(showCamera = false) }
+    }
+
+    /** Called by CameraScreen after a photo is successfully saved */
+    fun onPhotoCaptured(uri: Uri) {
+        _state.update { it.copy(showCamera = false, selectedImageUri = uri, isDemoMode = false) }
         processImage(uri)
     }
 

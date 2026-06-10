@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -47,13 +46,25 @@ import com.tasnimulhasan.scanner.presentation.ui.components.ReceiptCard
 import com.tasnimulhasan.scanner.presentation.ui.components.ScannerOverlay
 import com.tasnimulhasan.scanner.presentation.viewmodel.OcrUiState
 import com.tasnimulhasan.scanner.presentation.viewmodel.OcrViewModel
+import com.tasnimulhasan.scanner.util.CameraFileHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OcrScreen(
     viewModel: OcrViewModel = hiltViewModel(),
+    cameraFileHelper: CameraFileHelper,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    // ── Camera fullscreen overlay ─────────────────────────────────────────
+    if (state.showCamera) {
+        CameraScreen(
+            cameraFileHelper = cameraFileHelper,
+            onPhotoCaptured = viewModel::onPhotoCaptured,
+            onBack = viewModel::onCloseCamera,
+        )
+        return
+    }
 
     Scaffold(
         topBar = {
@@ -103,6 +114,7 @@ fun OcrScreen(
                     is OcrUiState.Idle -> {
                         IdleContent(
                             onImageSelected = viewModel::onImageSelected,
+                            onCameraClicked = viewModel::onOpenCamera,
                             onDemoClicked = viewModel::onLoadDemoReceipt,
                         )
                     }
@@ -157,6 +169,7 @@ fun OcrScreen(
 @Composable
 private fun IdleContent(
     onImageSelected: (Uri) -> Unit,
+    onCameraClicked: () -> Unit,
     onDemoClicked: () -> Unit,
 ) {
     Column(
@@ -185,7 +198,7 @@ private fun IdleContent(
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = "Pick an image from your gallery\nor try the built-in demo receipt",
+            text = "Use your camera, pick from gallery,\nor try the built-in demo receipt",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -195,12 +208,11 @@ private fun IdleContent(
 
         ImagePickerButton(
             onImageSelected = onImageSelected,
+            onCameraClicked = onCameraClicked,
             onDemoClicked = onDemoClicked,
         )
 
         Spacer(Modifier.height(32.dp))
-
-        // Feature chips
         FeaturesList()
     }
 }
@@ -259,6 +271,7 @@ private fun ErrorContent(message: String, onRetry: () -> Unit) {
 @Composable
 private fun FeaturesList() {
     val features = listOf(
+        "✦  Live camera scan with receipt framing",
         "✦  Powered by Google ML Kit",
         "✦  Extracts items, totals & store info",
         "✦  Clean Architecture + DDD",

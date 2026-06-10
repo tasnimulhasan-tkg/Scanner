@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Defines which directories FileProvider is allowed to share.
+    camera_photos/ lives in getCacheDir() — temp storage, auto-cleaned by OS.
+-->
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path
+        name="camera_photos"
+        path="camera_photos/" />
+</paths>
